@@ -1,0 +1,23 @@
+.button {
+    -fx-background-color: #43EFE1;
+    -fx-font-size: 17pt;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 15;
+}
+
+.label {
+    -fx-text-fill: #FFFFFF;
+}
+
+#ballsCountField{
+    -fx-background-color: linear-gradient(#81A2BE, #8ABEB7);
+    -fx-text-fill: #FFFFFF;
+}
+
+#gamePart {
+    -fx-padding: 0;
+}
+
+#controlPart{
+    -fx-background-color: linear-gradient(#8ABEB7,#81A2BE);
+}
