@@ -19,7 +19,10 @@ public class Main extends Application {
         loader.setLocation(getClass().getResource("../screen-layout.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
+
+        //add stylesheet file
         scene.getStylesheets().add("custom-style.css");
+
         primaryStage.resizableProperty().set(false);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Snake Game");
