@@ -2,80 +2,105 @@ package model;
 
 import javafx.scene.image.Image;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Виктор on 11.11.2016.
- */
-public class Snake extends GameItem {
+public class Snake {
 
-    //thread status flags
-    private boolean updating;
-    private boolean isPaused;
+    private static final int UP = 0;
+    private static final int LEFT = 1;
+    private static final int DOWN = 2;
+    private static final int RIGHT = 3;
 
-    private int length;
-    private Duration currentDuration;
-    private List<Point> snake;
-    private List<Point> oldCoordinates;
-
-    public Snake(int length, List<Point> snake) {
-        this.length = length;
-        this.snake = snake;
-        this.oldCoordinates = snake;
-    }
+    private List<SnakePart> parts;
+    private int direction;
 
     public Snake() {
-        this.length = 2;
-        this.snake = new LinkedList<Point>();
-        this.snake.add(new Point(1, 0, new Image("images/head.png")));
-        this.snake.add(new Point(0, 0, new Image("images/tail.png")));
+        direction = DOWN;
+        parts = new ArrayList<SnakePart>() {{
+            add(new SnakePart(0, 2, new Image("images/head.png")));
+            add(new SnakePart(0, 1, new Image("images/body.png")));
+            add(new SnakePart(0, 0, new Image("images/body.png")));
+        }};
     }
 
-    public List<Point> getSnake() {
-        return this.snake;
+    public void turnLeft() {
+        direction += 1;
+        if (direction > RIGHT)
+            direction = UP;
     }
 
-    @Override
-    public void run() {
-        do {
-            if (updating) {
-                if (!isPaused) {
-                    update();
-                }
-            } else {
-                return;
-            }
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-
-            }
-        }
-        while (true);
+    public void turnRight() {
+        direction -= 1;
+        if (direction < UP)
+            direction = RIGHT;
     }
 
-    public void update(){
-        switch (currentDuration){
-            case TOP: {
-                snake.get(0).setPositionY(snake.get(0).getPositionX()-1);
-            }
-            case RIGHT:{
-                snake.get(0).setPositionX(snake.get(0).getPositionX()+1);
-            }
-            case BOTTOM:{
-                snake.get(0).setPositionY(snake.get(0).getPositionX()+1);
-            }
-            case LEFT: {
-                snake.get(0).setPositionX(snake.get(0).getPositionX()-1);
-            }
+    public void eat() {
+        SnakePart end = parts.get(parts.size()-1);
+        end.setImage(new Image("images/body.png"));
+        parts.add(new SnakePart(end.getX(), end.getY(), new Image("images/body.png")));
+    }
+
+    public void move() {
+        SnakePart head = parts.get(0);
+
+        for (int i = parts.size()-1; i > 0; i--) {
+            SnakePart before = parts.get(i - 1);
+            SnakePart part = parts.get(i);
+            part.setX(before.getX());
+            part.setY(before.getY());
         }
-        for(int i = 1; i < snake.size() - 1; i++){
-            snake.get(i).setPositionX(oldCoordinates.get(i-1).getPositionX());
-            snake.get(i).setPositionY(oldCoordinates.get(i-1).getPositionY());
+
+        switch (direction) {
+            case UP:
+                head.setY(head.getY() - 1);
+                break;
+            case LEFT:
+                head.setX(head.getX() - 1);
+                break;
+            case DOWN:
+                head.setY(head.getY() + 1);
+                break;
+            case RIGHT:
+                head.setX(head.getX() + 1);
+                break;
         }
-        for (int i = 0; i < snake.size() - 1; i++){
-            oldCoordinates.set(i, snake.get(i));
+
+        //вылазием с противоположной стороны экрана. Экран 16х16
+        if (head.getX() < 0)
+            head.setX(15);
+        if (head.getX() > 15)
+            head.setX(0);
+        if (head.getY() < 0)
+            head.setY(15);
+        if (head.getY() > 15)
+            head.setY(0);
+    }
+
+    public boolean checkBitten() {
+        SnakePart head = parts.get(0);
+        for (int i = 1; i < parts.size(); i++) {
+            SnakePart part = parts.get(i);
+            if (part.getX() == head.getX() && part.getY() == head.getY())
+                return true;
         }
+        return false;
+    }
+
+    public List<SnakePart> getParts() {
+        return parts;
+    }
+
+    public void setParts(List<SnakePart> parts) {
+        this.parts = parts;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
 }

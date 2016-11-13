@@ -2,17 +2,21 @@ package model;
 
 import javafx.scene.image.Image;
 
-public class Frog {
+public class SnakePart {
 
     private int x, y;
     private Image image;
 
-    public Frog(int x, int y) {
+    public SnakePart(int x, int y) {
         this.x = x;
         this.y = y;
-        this.image = new Image("images/star.png");
     }
 
+    public SnakePart(int x, int y, Image image) {
+        this.x = x;
+        this.y = y;
+        this.image = image;
+    }
 
     public int getX() {
         return x;

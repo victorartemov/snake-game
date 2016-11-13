@@ -1,5 +1,5 @@
 .button {
-    -fx-background-color: #43EFE1;
+    -fx-background-color: #14261A;
     -fx-font-size: 17pt;
     -fx-text-fill: #FFFFFF;
     -fx-background-radius: 15;
@@ -19,5 +19,5 @@
 }
 
 #controlPart{
-    -fx-background-color: linear-gradient(#8ABEB7,#81A2BE);
+    -fx-background-color: linear-gradient(#55BB11,#2C6009);
 }
