@@ -15,6 +15,8 @@ public class Main extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
+
+        //специфическая хренотень из javafx
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("../screen-layout.fxml"));
         Parent root = loader.load();

@@ -16,14 +16,14 @@
             <children>
                 <Button fx:id="startButton" layoutX="25.0" layoutY="25.0" maxHeight="0.0" maxWidth="100.0"
                         minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                        onMouseClicked="#startButtonClicked" prefHeight="50.0" prefWidth="100.0" text="Start"
+                        onMouseClicked="#startButtonClicked" prefHeight="50.0" prefWidth="120.0" text="Start"
                         AnchorPane.topAnchor="25.0">
                     <font>
                         <Font size="28.0"/>
                     </font>
                 </Button>
-                <Button fx:id="stopButton" layoutX="159.0" layoutY="19.0" minHeight="-Infinity" mnemonicParsing="false"
-                        onMouseClicked="#stopButtonClicked" prefHeight="50.0" prefWidth="100.0" text="Stop"
+                <Button fx:id="pauseButton" layoutX="159.0" layoutY="19.0" minHeight="-Infinity" mnemonicParsing="false"
+                        onMouseClicked="#pauseButtonClicked" prefHeight="50.0" prefWidth="120.0" text="Pause"
                         AnchorPane.topAnchor="25.0">
                     <font>
                         <Font size="28.0"/>

@@ -5,8 +5,10 @@ import javafx.scene.image.Image;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Snake {
+public class Snake implements Runnable {
 
+    //константы направления движения змейки.
+    //Обратите внимание на логику методов поворота и зацените простоту и изящество :)
     private static final int UP = 0;
     private static final int LEFT = 1;
     private static final int DOWN = 2;
@@ -15,8 +17,12 @@ public class Snake {
     private List<SnakePart> parts;
     private int direction;
 
+    private boolean isRunning; //бесполезный флаг, по сути он приостанавливает поток змеи,
+    // но на игру это не влияет
+
     public Snake() {
         direction = DOWN;
+        isRunning = true;
         parts = new ArrayList<SnakePart>() {{
             add(new SnakePart(0, 2, new Image("images/head.png")));
             add(new SnakePart(0, 1, new Image("images/body.png")));
@@ -36,22 +42,28 @@ public class Snake {
             direction = RIGHT;
     }
 
+    //кушаем лягушку и становимся длиннее на один элемент. Добавляем его в конец змейки
     public void eat() {
-        SnakePart end = parts.get(parts.size()-1);
+        SnakePart end = parts.get(parts.size() - 1);
         end.setImage(new Image("images/body.png"));
         parts.add(new SnakePart(end.getX(), end.getY(), new Image("images/body.png")));
     }
 
     public void move() {
+
+        //Логика движения такова: сначала мы, начиная от последнего, перемещаем все элементы змеи
+        //на позицию впереди стоящего элементы
+
         SnakePart head = parts.get(0);
 
-        for (int i = parts.size()-1; i > 0; i--) {
+        for (int i = parts.size() - 1; i > 0; i--) {
             SnakePart before = parts.get(i - 1);
             SnakePart part = parts.get(i);
             part.setX(before.getX());
             part.setY(before.getY());
         }
 
+        //тепер двигает голову в зависимости от направления движения змеи
         switch (direction) {
             case UP:
                 head.setY(head.getY() - 1);
@@ -78,6 +90,7 @@ public class Snake {
             head.setY(0);
     }
 
+    //проверяем, не укусила ли змея сама себя
     public boolean checkBitten() {
         SnakePart head = parts.get(0);
         for (int i = 1; i < parts.size(); i++) {
@@ -102,5 +115,21 @@ public class Snake {
 
     public void setDirection(int direction) {
         this.direction = direction;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    //вот, собственно, и сам код потока змеи. Он не производит движения! Просто дергается из класса
+    //GameWorld, поэтому при остановки этого потока движение змейки непрекратится. Если хотите - переделайте логику
+    @Override
+    public void run() {
+        if (isRunning)
+            move();
     }
 }

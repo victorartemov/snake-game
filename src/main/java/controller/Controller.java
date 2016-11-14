@@ -32,7 +32,7 @@ public class Controller {
     private final int GAME_SCREEN_SIZE = 512;
     private final int GAME_BOARD_CELL_SIZE = 32;
 
-    //три возможных скорости игры. По умолчанию - MEDIUM
+    //три возможных скорости игры
     private final float SLOW = 0.02f;
     private final float MEDIUM = 0.03f;
     private final float FAST = 0.04f;
@@ -57,7 +57,7 @@ public class Controller {
     private Button startButton;
 
     @FXML
-    private Button stopButton;
+    private Button pauseButton;
 
     @FXML
     private Label scoreLabel;
@@ -78,37 +78,51 @@ public class Controller {
         return startButton;
     }
 
-    public Button getStopButton() {
-        return stopButton;
+    public Button getPauseButton() {
+        return pauseButton;
     }
 
     @FXML
     protected void startButtonClicked() {
 
-        if (startButton.getText().compareTo(START) == 0) {
+        if (startButton.getText().equals(START)) {
             game = new GameWorld();
             snake = game.getSnake();
             game.placeFrog();
             score = game.getScore();
             timer.start();
             startButton.setText(STOP);
+            pauseButton.setDisable(false);
         }
         //stopping the game
         else {
+            game.setGameOver(true);
             timer.stop();
             initializeStartScreen();
             startButton.setText(START);
+            pauseButton.setDisable(true);
+            pauseButton.setText(PAUSE);
         }
     }
 
     @FXML
-    protected void stopButtonClicked() {
-
+    protected void pauseButtonClicked() {
+        if(pauseButton.getText().equals(PAUSE)){
+            snake.setRunning(false); //вообще это излишне, но чисто формально мы приостановили поток
+            game.setRunning(false); // а по-настоящему игра приостанавливается тут
+            pauseButton.setText(RESUME);
+        } else {
+            snake.setRunning(true);
+            game.setRunning(true);
+            pauseButton.setText(PAUSE);
+        }
     }
 
 
     @FXML
     public void initialize() {
+
+        pauseButton.setDisable(true);
         canvas = new Canvas(GAME_SCREEN_SIZE, GAME_SCREEN_SIZE);
         gc = canvas.getGraphicsContext2D();
         gamePart.getChildren().add(canvas);
@@ -120,7 +134,8 @@ public class Controller {
 
         canvas.setOnMouseClicked(event -> mouseClicked(event.getButton().toString()));
 
-        //основной цикл игры
+        //магический класс, который всегда выдает 60 фэпэсов, но у нас все равно змейка живет по тикам
+        //описанным в гласе GameWorld
         timer = new AnimationTimer() {
             public void handle(long currentNanoTime) {
                 gc.clearRect(0, 0, GAME_SCREEN_SIZE, GAME_SCREEN_SIZE);
@@ -129,6 +144,15 @@ public class Controller {
                 renderFrog(game.getFrog());
                 updateScoreLabel();
                 game.update(FAST);
+
+                //змейка скушала себя
+                if(game.isGameOver()){
+                    timer.stop();
+                    initializeStartScreen();
+                    startButton.setText(START);
+                    pauseButton.setText(PAUSE);
+                    pauseButton.setDisable(true);
+                }
             }
         };
     }

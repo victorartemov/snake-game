@@ -2,15 +2,12 @@ package model;
 
 import javafx.scene.image.Image;
 
+//Элемент змейки - позиция на игровом поле и картинка
+
 public class SnakePart {
 
     private int x, y;
     private Image image;
-
-    public SnakePart(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
 
     public SnakePart(int x, int y, Image image) {
         this.x = x;

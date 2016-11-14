@@ -2,6 +2,8 @@ package model;
 
 import javafx.scene.image.Image;
 
+//класс лягушки - ничего интересного и сложного. Позиция на игровом поле и картинка
+
 public class Frog {
 
     private int x, y;

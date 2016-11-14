@@ -4,6 +4,8 @@ import java.util.Random;
 
 public class GameWorld {
 
+    //класс самой игры. Содержит змейку, лягушку и карту 16 на 16 + не самую понятную логику тика игры
+
     private static final int WORLD_WIDTH = 16;
     private static final int WORLD_HEIGHT = 16;
     private static final int SCORE_INCREMENT = 10;
@@ -13,6 +15,7 @@ public class GameWorld {
     private Snake snake;
     private Frog frog;
     private boolean gameOver;
+    private boolean isRunning;
     private int score;
 
     private boolean fields[][];
@@ -22,7 +25,14 @@ public class GameWorld {
 
     public GameWorld() {
         this.snake = new Snake();
+
+        //вот тут мы создаем для змейки отдельный поток
+        Thread snakeThread = new Thread(snake);
+        snakeThread.setDaemon(true); //загуглите если надо
+        snakeThread.start();
+
         this.gameOver = false;
+        this.isRunning = true;
         this.score = 0;
         this.fields = new boolean[WORLD_WIDTH][WORLD_HEIGHT];
         this.random = new Random();
@@ -87,6 +97,15 @@ public class GameWorld {
         this.fields = fields;
     }
 
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    //усовершенствованный метод размещения лягушки
     public void placeFrog() {
         for(int x = 0; x < WORLD_WIDTH; x++){
             for (int y = 0; y < WORLD_HEIGHT; y++){
@@ -117,30 +136,34 @@ public class GameWorld {
         frog = new Frog(frogX, frogY);
     }
 
+    //самый главный метод отображения игры
     public void update(float deltaTime){
         if(gameOver)
             return;
 
-        tickTime += deltaTime;
+        if(isRunning) {
 
-        while (tickTime > tick){
-            tickTime -= tick;
-            snake.move();
-            if(snake.checkBitten()){
-                gameOver = true;
-                return;
-            }
+            tickTime += deltaTime;
 
-            SnakePart head = snake.getParts().get(0);
-            if(head.getX() == frog.getX() && head.getY() == frog.getY()){
-                score += SCORE_INCREMENT;
-                snake.eat();
-
-                if(snake.getParts().size() == WORLD_HEIGHT*WORLD_WIDTH){
+            while (tickTime > tick) {
+                tickTime -= tick;
+                snake.move();
+                if (snake.checkBitten()) {
                     gameOver = true;
                     return;
-                } else {
-                    placeFrog();
+                }
+
+                SnakePart head = snake.getParts().get(0);
+                if (head.getX() == frog.getX() && head.getY() == frog.getY()) {
+                    score += SCORE_INCREMENT;
+                    snake.eat();
+
+                    if (snake.getParts().size() == WORLD_HEIGHT * WORLD_WIDTH) {
+                        gameOver = true;
+                        return;
+                    } else {
+                        placeFrog();
+                    }
                 }
             }
         }
